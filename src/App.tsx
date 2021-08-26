@@ -62,18 +62,10 @@ function App() {
         characterRaceArray.push(characterList.docs[i].race);
       }
       console.log(characterRaceArray);
-      let distinctRaces = characterRaceArray.filter(
-        (item, i, ar) => ar.indexOf(item) === i
-      );
-
-      enum UniqueRaces {
-        distinctRaces,
-      }
-      console.log(UniqueRaces);
-
-      let result_object: any = {};
 
       /////////// DATA ///////////////
+      let result_object: any = {};
+
       for (let i = 0; i < characterRaceArray.length; i++) {
         if (!result_object[characterRaceArray[i]])
           result_object[characterRaceArray[i]] = 0;
