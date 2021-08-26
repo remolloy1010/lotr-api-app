@@ -1,12 +1,41 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 import { getRaces } from "./getRaces";
+import RacesBarChart from "./RacesBarChart";
+import {
+  BarChart,
+  Bar,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 function App() {
   const [quote, setQuote] = useState();
   const [character, setCharacter] = useState();
   const [characterRace, setCharacterRace] = useState();
   const [movie, setMovie] = useState();
+
+  const example_data = {
+    Elf: 50,
+    Human: 12,
+    Hobbit: 15,
+  };
+
+  const example_array: any = [];
+  for (const [key, value] of Object.entries(example_data)) {
+    let obj_race_count = {
+      race: "",
+      count: "",
+    };
+    obj_race_count.race = `${key}`;
+    obj_race_count.count = `${value}`;
+    example_array.push(obj_race_count);
+  }
 
   useEffect(() => {
     const headers = {
@@ -28,10 +57,8 @@ function App() {
         { headers: headers }
       );
       const characterList = await rawCharacterList.json();
-      const characterRaceArray = [];
-      // console.log(characterList.docs);
+      let characterRaceArray: Array<string> = [];
       for (let i = 0; i < characterList.docs.length; i++) {
-        // console.log(characterList.docs[i].race);
         characterRaceArray.push(characterList.docs[i].race);
       }
       console.log(characterRaceArray);
@@ -39,9 +66,14 @@ function App() {
         (item, i, ar) => ar.indexOf(item) === i
       );
 
-      const arr = [2, 2, 5, 2, 2, 2, 4, 5, 5, 9];
+      enum UniqueRaces {
+        distinctRaces,
+      }
+      console.log(UniqueRaces);
+
       let result_object: any = {};
 
+      /////////// DATA ///////////////
       for (let i = 0; i < characterRaceArray.length; i++) {
         if (!result_object[characterRaceArray[i]])
           result_object[characterRaceArray[i]] = 0;
@@ -49,6 +81,22 @@ function App() {
       }
       console.log(result_object);
 
+      const arr2: any = [];
+      for (const [key, value] of Object.entries(result_object)) {
+        let obj_race_count = {
+          race: "",
+          count: "",
+        };
+        obj_race_count.race = `${key}`;
+        obj_race_count.count = `${value}`;
+        arr2.push(obj_race_count);
+        console.log(obj_race_count);
+      }
+      console.log(arr2);
+
+      for (let i = 0; i < result_object.length; i++) {
+        console.log(result_object[i]);
+      }
       const rawCharacters = await fetch(
         "https://the-one-api.dev/v2/character?_id=" + quote.character,
         { headers: headers }
@@ -96,12 +144,53 @@ function App() {
     fetchData();
   }, []);
 
+  // for (let i = 0; i < characterRaceArray.length; i++) {
+  //   if (!result_object[characterRaceArray[i]])
+  //     result_object[characterRaceArray[i]] = 0;
+  //   ++result_object[characterRaceArray[i]];
+  // }
+  // console.log(result_object);
+  // const arr3: any = [];
+  // for (const [key, value] of Object.entries(result_object)) {
+  //   let obj_race_count = {
+  //     race: "",
+  //     count: "",
+  //   };
+  //   obj_race_count.race = `${key}`;
+  //   obj_race_count.count = `${value}`;
+  //   arr3.push(obj_race_count);
+  //   console.log(obj_race_count);
+  // }
+  // console.log(arr2);
+
   return (
     <div>
       <blockquote>{quote}</blockquote>
       <cite>
         - {character} ({characterRace})
       </cite>
+      <div>
+        {" "}
+        <RacesBarChart data={example_array}></RacesBarChart>{" "}
+      </div>
+      <BarChart
+        width={500}
+        height={300}
+        data={example_array}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="race" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="count" fill="#8884d8" />
+      </BarChart>
     </div>
   );
 }
