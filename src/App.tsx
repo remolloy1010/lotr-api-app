@@ -19,6 +19,8 @@ function App() {
   const [character, setCharacter] = useState();
   const [characterRace, setCharacterRace] = useState();
   const [movie, setMovie] = useState();
+  const [raceArray, setRaceArray] = useState();
+  const [loading, setLoading] = useState(true);
 
   const example_data = {
     Elf: 50,
@@ -57,11 +59,19 @@ function App() {
         { headers: headers }
       );
       const characterList = await rawCharacterList.json();
-      let characterRaceArray: Array<string> = [];
-      for (let i = 0; i < characterList.docs.length; i++) {
-        characterRaceArray.push(characterList.docs[i].race);
-      }
-      console.log(characterRaceArray);
+
+      // Add try-catch error handling if data isn't fetched
+      // throw new Error("Oops, can't fetch your data you dimwit!");
+
+      // convert to map - iterates over array and for each value, return the race field
+      const characterRaceArray: Array<string> = characterList.docs.map(
+        (doc: any) => doc.race
+      );
+
+      // for (let i = 0; i < characterList.docs.length; i++) {
+      //   characterRaceArray.push(characterList.docs[i].race);
+      // }
+      // console.log(characterRaceArray);
 
       /////////// DATA ///////////////
       let result_object: any = {};
@@ -77,14 +87,19 @@ function App() {
       for (const [key, value] of Object.entries(result_object)) {
         let obj_race_count = {
           race: "",
-          count: "",
+          count: 0,
         };
         obj_race_count.race = `${key}`;
-        obj_race_count.count = `${value}`;
+        obj_race_count.count = parseInt(`${value}`);
         arr2.push(obj_race_count);
         console.log(obj_race_count);
       }
       console.log(arr2);
+      arr2.sort((a: any, b: any) => (a.count > b.count ? -1 : 1));
+
+      setRaceArray(arr2);
+
+      setLoading(false);
 
       for (let i = 0; i < result_object.length; i++) {
         console.log(result_object[i]);
@@ -136,24 +151,9 @@ function App() {
     fetchData();
   }, []);
 
-  // for (let i = 0; i < characterRaceArray.length; i++) {
-  //   if (!result_object[characterRaceArray[i]])
-  //     result_object[characterRaceArray[i]] = 0;
-  //   ++result_object[characterRaceArray[i]];
-  // }
-  // console.log(result_object);
-  // const arr3: any = [];
-  // for (const [key, value] of Object.entries(result_object)) {
-  //   let obj_race_count = {
-  //     race: "",
-  //     count: "",
-  //   };
-  //   obj_race_count.race = `${key}`;
-  //   obj_race_count.count = `${value}`;
-  //   arr3.push(obj_race_count);
-  //   console.log(obj_race_count);
-  // }
-  // console.log(arr2);
+  if (loading) {
+    return <div> Loading....</div>;
+  }
 
   return (
     <div>
@@ -161,24 +161,22 @@ function App() {
       <cite>
         - {character} ({characterRace})
       </cite>
-      <div>
-        {" "}
-        <RacesBarChart data={example_array}></RacesBarChart>{" "}
-      </div>
+      <div> {/* <RacesBarChart data={raceArray}></RacesBarChart>{" "} */}</div>
       <BarChart
-        width={500}
-        height={300}
-        data={example_array}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
+        width={1000}
+        height={500}
+        data={raceArray}
+        // margin={{
+        //   top: 5,
+        //   right: 30,
+        //   left: 20,
+        //   bottom: 5,
+        // }}
+        layout="vertical"
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="race" />
-        <YAxis />
+        <XAxis dataKey="count" type="number" />
+        <YAxis dataKey="race" type="category" />
         <Tooltip />
         <Legend />
         <Bar dataKey="count" fill="#8884d8" />
