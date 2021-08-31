@@ -14,13 +14,20 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-function App() {
+function ErrorComponent() {
+  return <h1>Cannot hit that API endpoint! You sure it exists?</h1>;
+}
+
+export default function App() {
   const [quote, setQuote] = useState();
   const [character, setCharacter] = useState();
   const [characterRace, setCharacterRace] = useState();
   const [movie, setMovie] = useState();
   const [raceArray, setRaceArray] = useState();
   const [loading, setLoading] = useState(true);
+  var [executionOutput, setExecutionOutput] = useState("");
+
+  // var [hasError, setHasError] = useState(false);
 
   const example_data = {
     Elf: 50,
@@ -54,56 +61,70 @@ function App() {
       const quote = quotes.docs[Math.floor(Math.random() * quotes.docs.length)]; //get some random index from the quotes array
       setQuote(quote.dialog); //get the dialog (could also grab the character who said it and the movie)
 
-      const rawCharacterList = await fetch(
-        "https://the-one-api.dev/v2/character",
-        { headers: headers }
-      );
-      const characterList = await rawCharacterList.json();
+      try {
+        const rawCharacterList = await fetch(
+          "https://the-one-api.dev/v2/characterr",
+          { headers: headers }
+        );
 
-      // Add try-catch error handling if data isn't fetched
-      // throw new Error("Oops, can't fetch your data you dimwit!");
+        // try {
+        //         const characterList = await rawCharacterList.json();
 
-      // convert to map - iterates over array and for each value, return the race field
-      const characterRaceArray: Array<string> = characterList.docs.map(
-        (doc: any) => doc.race
-      );
+        //         if(!characterList.length){
 
-      // for (let i = 0; i < characterList.docs.length; i++) {
-      //   characterRaceArray.push(characterList.docs[i].race);
-      // }
-      // console.log(characterRaceArray);
+        //         }
+        // } catch (error) {
 
-      /////////// DATA ///////////////
-      let result_object: any = {};
+        // }
+        const characterList = await rawCharacterList.json();
+        console.log(characterList == null);
 
-      for (let i = 0; i < characterRaceArray.length; i++) {
-        if (!result_object[characterRaceArray[i]])
-          result_object[characterRaceArray[i]] = 0;
-        ++result_object[characterRaceArray[i]];
+        // Add try-catch error handling if data isn't fetched
+        // throw new Error("Oops, can't fetch your data you dimwit!");
+
+        // convert to map - iterates over array and for each value, return the race field
+        const characterRaceArray: Array<string> = characterList.docs.map(
+          (doc: any) => doc.race
+        );
+
+        // for (let i = 0; i < characterList.docs.length; i++) {
+        //   characterRaceArray.push(characterList.docs[i].race);
+        // }
+        // console.log(characterRaceArray);
+
+        /////////// DATA ///////////////
+        let result_object: any = {};
+
+        for (let i = 0; i < characterRaceArray.length; i++) {
+          if (!result_object[characterRaceArray[i]])
+            result_object[characterRaceArray[i]] = 0;
+          ++result_object[characterRaceArray[i]];
+        }
+        // console.log(result_object);
+
+        const arr2: any = [];
+        for (const [key, value] of Object.entries(result_object)) {
+          let obj_race_count = {
+            race: "",
+            count: 0,
+          };
+          obj_race_count.race = `${key}`;
+          obj_race_count.count = parseInt(`${value}`);
+          arr2.push(obj_race_count);
+          // console.log(obj_race_count);
+        }
+        console.log(arr2);
+        arr2.sort((a: any, b: any) => (a.count > b.count ? -1 : 1));
+
+        setRaceArray(arr2);
+
+        // setLoading(false);
+      } catch (error) {
+        // ErrorComponent();
+        return <h1> ERROR!!!!</h1>;
+        console.log("error! cant GET");
       }
-      console.log(result_object);
 
-      const arr2: any = [];
-      for (const [key, value] of Object.entries(result_object)) {
-        let obj_race_count = {
-          race: "",
-          count: 0,
-        };
-        obj_race_count.race = `${key}`;
-        obj_race_count.count = parseInt(`${value}`);
-        arr2.push(obj_race_count);
-        console.log(obj_race_count);
-      }
-      console.log(arr2);
-      arr2.sort((a: any, b: any) => (a.count > b.count ? -1 : 1));
-
-      setRaceArray(arr2);
-
-      setLoading(false);
-
-      for (let i = 0; i < result_object.length; i++) {
-        console.log(result_object[i]);
-      }
       const rawCharacters = await fetch(
         "https://the-one-api.dev/v2/character?_id=" + quote.character,
         { headers: headers }
@@ -112,7 +133,7 @@ function App() {
       console.log(characters);
       const character = characters.docs[0]; // 1st docs in array - only 1 character per quote
 
-      console.log(character.race);
+      // console.log(character.race);
 
       setCharacter(character.name); // set character output to the name
       setCharacterRace(character.race);
@@ -151,9 +172,9 @@ function App() {
     fetchData();
   }, []);
 
-  if (loading) {
-    return <div> Loading....</div>;
-  }
+  // if (loading) {
+  //   return <div> Loading....</div>;
+  // }
 
   return (
     <div>
@@ -164,7 +185,7 @@ function App() {
       <div> {/* <RacesBarChart data={raceArray}></RacesBarChart>{" "} */}</div>
       <BarChart
         width={1000}
-        height={500}
+        height={800}
         data={raceArray}
         // margin={{
         //   top: 5,
@@ -176,7 +197,13 @@ function App() {
       >
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="count" type="number" />
-        <YAxis dataKey="race" type="category" />
+        <YAxis
+          dataKey="race"
+          type="category"
+          width={120}
+          height={6}
+          interval={0}
+        />
         <Tooltip />
         <Legend />
         <Bar dataKey="count" fill="#8884d8" />
@@ -184,5 +211,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
