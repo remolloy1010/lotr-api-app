@@ -1,11 +1,8 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { getRaces } from "./getRaces";
-import RacesBarChart from "./RacesBarChart";
 import {
   BarChart,
   Bar,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,20 +11,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-function ErrorComponent() {
-  return <h1>Cannot hit that API endpoint! You sure it exists?</h1>;
-}
-
 export default function App() {
   const [quote, setQuote] = useState();
   const [character, setCharacter] = useState();
   const [characterRace, setCharacterRace] = useState();
-  const [movie, setMovie] = useState();
   const [raceArray, setRaceArray] = useState();
   const [loading, setLoading] = useState(true);
-  var [executionOutput, setExecutionOutput] = useState("");
+  const [error, setError] = useState(false);
 
-  // var [hasError, setHasError] = useState(false);
+  //// move API calls and other info to utils file
+  //// create multiple useeffects
+  //// create function for bar chart
 
   const example_data = {
     Elf: 50,
@@ -63,24 +57,14 @@ export default function App() {
 
       try {
         const rawCharacterList = await fetch(
-          "https://the-one-api.dev/v2/characterr",
+          "https://the-one-api.dev/v2/character",
           { headers: headers }
         );
 
-        // try {
-        //         const characterList = await rawCharacterList.json();
-
-        //         if(!characterList.length){
-
-        //         }
-        // } catch (error) {
-
-        // }
         const characterList = await rawCharacterList.json();
         console.log(characterList == null);
 
         // Add try-catch error handling if data isn't fetched
-        // throw new Error("Oops, can't fetch your data you dimwit!");
 
         // convert to map - iterates over array and for each value, return the race field
         const characterRaceArray: Array<string> = characterList.docs.map(
@@ -117,12 +101,10 @@ export default function App() {
         arr2.sort((a: any, b: any) => (a.count > b.count ? -1 : 1));
 
         setRaceArray(arr2);
-
-        // setLoading(false);
       } catch (error) {
-        // ErrorComponent();
-        return <h1> ERROR!!!!</h1>;
-        console.log("error! cant GET");
+        setError(true);
+      } finally {
+        setLoading(false);
       }
 
       const rawCharacters = await fetch(
@@ -172,9 +154,12 @@ export default function App() {
     fetchData();
   }, []);
 
-  // if (loading) {
-  //   return <div> Loading....</div>;
-  // }
+  if (error) {
+    return <div> ERROR: Can't find character list! </div>;
+  }
+  if (loading) {
+    return <div> Loading....</div>;
+  }
 
   return (
     <div>
@@ -182,32 +167,22 @@ export default function App() {
       <cite>
         - {character} ({characterRace})
       </cite>
-      <div> {/* <RacesBarChart data={raceArray}></RacesBarChart>{" "} */}</div>
-      <BarChart
-        width={1000}
-        height={800}
-        data={raceArray}
-        // margin={{
-        //   top: 5,
-        //   right: 30,
-        //   left: 20,
-        //   bottom: 5,
-        // }}
-        layout="vertical"
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="count" type="number" />
-        <YAxis
-          dataKey="race"
-          type="category"
-          width={120}
-          height={6}
-          interval={0}
-        />
-        <Tooltip />
-        <Legend />
-        <Bar dataKey="count" fill="#8884d8" />
-      </BarChart>
+      <ResponsiveContainer width="100%" height={800}>
+        <BarChart data={raceArray} layout="vertical">
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="count" type="number" />
+          <YAxis
+            dataKey="race"
+            type="category"
+            width={120}
+            height={6}
+            interval={0}
+          />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="count" fill="#8884d8" />
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 }
