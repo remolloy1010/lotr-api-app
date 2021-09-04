@@ -12,8 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// export const RacesBarChart = ({}: any) => {
-function RacesBarChart(props: any) {
+export default function RacesBarChart(props: any) {
   console.log(props);
   return (
     // <ResponsiveContainer width="100%" height="100%">
@@ -39,4 +38,3 @@ function RacesBarChart(props: any) {
     // </ResponsiveContainer>
   );
 }
-export default RacesBarChart;
