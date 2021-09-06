@@ -5,6 +5,8 @@ const headers = {
 
 export const QUOTES_ENDPOINT = "https://the-one-api.dev/v2/quote";
 export const CHARACTERS_ENDPOINT = "https://the-one-api.dev/v2/character";
+export const MOVIES_ENDPOINT = "https://the-one-api.dev/v2/movie";
+export const CHAPTERS_ENDPOINT = "https://the-one-api.dev/v2/chapter";
 
 export const fetchAPIData = async (url: string) => {
   //First fetch raw data from API

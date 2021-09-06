@@ -12,7 +12,7 @@ import { PRIMARY_COLOR } from "./theme";
 
 export default function RacesBarChart(props: any) {
   return (
-    <ResponsiveContainer width={1000} height={800}>
+    <ResponsiveContainer width="100%" height={800}>
       <BarChart data={props.data} layout="vertical">
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="count" type="number" />
