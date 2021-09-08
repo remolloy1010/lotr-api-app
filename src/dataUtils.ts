@@ -3,7 +3,6 @@ export const getRaceCount = (charList: any) => {
     (doc: any) => doc.race
   );
 
-  console.log(characterRaceArray0);
   const characterRaceArray: Array<string> = cleanRaceData(characterRaceArray0);
 
   const filteredRaceArray: Array<string> = characterRaceArray.filter(function (
@@ -76,4 +75,63 @@ export const cleanRaceData = (charList: any) => {
     }
   }
   return cleanedRaceArray;
+};
+
+export const cleanGenderData = (charList: any) => {
+  let cleanedGenderArray: Array<string> = [];
+
+  let regex_female = /female/;
+  let regex_male = /male/;
+
+  for (let i = 0; i < charList.length; i++) {
+    if (typeof charList[i] !== "undefined") {
+      if (regex_female.test(charList[i].toLowerCase())) {
+        cleanedGenderArray[i] = "Female";
+      } else if (regex_male.test(charList[i].toLowerCase())) {
+        cleanedGenderArray[i] = "Male";
+      } else {
+        cleanedGenderArray[i] = charList[i];
+      }
+    }
+  }
+
+  return cleanedGenderArray;
+};
+
+export const genderAnalytics = (charList: any) => {
+  const characterGenderArray0: Array<string> = charList.docs.map(
+    (doc: any) => doc.gender
+  );
+  const characterGenderArray: Array<string> = cleanGenderData(
+    characterGenderArray0
+  );
+  const filteredGenderArray: Array<string> = characterGenderArray.filter(
+    function (gender: string | undefined) {
+      return gender !== "NaN";
+    }
+  );
+
+  console.log(characterGenderArray);
+  /////////// DATA ///////////////
+  let result_object: any = {};
+
+  for (let i = 0; i < filteredGenderArray.length; i++) {
+    if (filteredGenderArray[i] === "NaN" || filteredGenderArray[i] === "") i++;
+    else if (!result_object[filteredGenderArray[i]])
+      result_object[filteredGenderArray[i]] = 0;
+    ++result_object[filteredGenderArray[i]];
+  }
+
+  const genderCountArray: any = [];
+  for (const [key, value] of Object.entries(result_object)) {
+    let obj_gender_count = {
+      gender: "",
+      count: 0,
+    };
+    obj_gender_count.gender = `${key}`;
+    obj_gender_count.count = parseInt(`${value}`);
+    genderCountArray.push(obj_gender_count);
+  }
+
+  return genderCountArray;
 };

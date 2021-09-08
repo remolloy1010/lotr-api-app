@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { PureComponent, useEffect, useState } from "react";
 import "./App.css";
 import { useFetchQuote } from "./useFetchQuote";
 import {
@@ -8,14 +8,16 @@ import {
   MOVIES_ENDPOINT,
   QUOTES_ENDPOINT,
 } from "./apiUtils";
-import { getRaceCount } from "./dataUtils";
+import { genderAnalytics, getRaceCount } from "./dataUtils";
 import RacesBarChart from "./RacesBarChart";
+import GenderChart from "./GenderChart";
 
 export default function App() {
   const [raceArray, setRaceArray] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [characters, setCharacters] = useState();
+  const [genderArray, setGenderArray] = useState();
 
   const { quote, character, characterRace } = useFetchQuote();
 
@@ -23,6 +25,7 @@ export default function App() {
     const fetchData = async () => {
       try {
         const characterList = await fetchAPIData(CHARACTERS_ENDPOINT);
+        console.log(genderAnalytics(characterList));
         setRaceArray(getRaceCount(characterList));
       } catch (error) {
         setError(true);
@@ -31,6 +34,14 @@ export default function App() {
       }
     };
 
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const characterList = await fetchAPIData(CHARACTERS_ENDPOINT);
+      setGenderArray(genderAnalytics(characterList));
+    };
     fetchData();
   }, []);
 
@@ -59,11 +70,19 @@ export default function App() {
 
   return (
     <div>
+      <h1>
+        {" "}
+        <title> The One Ring to Rule Them All!</title>{" "}
+      </h1>
       <blockquote>{quote}</blockquote>
       <cite>
         - {character} ({characterRace})
       </cite>
-      <RacesBarChart data={raceArray}> </RacesBarChart>
+      <div>
+        <GenderChart data={genderArray}></GenderChart>
+
+        <RacesBarChart data={raceArray}> </RacesBarChart>
+      </div>
     </div>
   );
 }
