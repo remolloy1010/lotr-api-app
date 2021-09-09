@@ -1,4 +1,12 @@
-import { PieChart, Pie, Legend, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Legend,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+const colors: any = ["#80B27A", "#406E3B"];
 
 export default function GenderChart(props: any) {
   console.log(props);
@@ -13,7 +21,12 @@ export default function GenderChart(props: any) {
         outerRadius={80}
         fill="#8884d8"
         nameKey="gender"
-      />
+      >
+        {props.data.map((entry: any, index: any) => (
+          <Cell key={`cell-${index}`} fill={colors[index]} />
+        ))}
+      </Pie>
+
       <Tooltip />
     </PieChart>
   );

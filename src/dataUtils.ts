@@ -111,6 +111,7 @@ export const genderAnalytics = (charList: any) => {
     }
   );
 
+  console.log("////////////////");
   console.log(characterGenderArray);
   /////////// DATA ///////////////
   let result_object: any = {};

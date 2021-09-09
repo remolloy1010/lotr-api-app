@@ -24,7 +24,6 @@ export default function RacesBarChart(props: any) {
           interval={0}
         />
         <Tooltip />
-        <Legend />
         <Bar dataKey="count" fill={PRIMARY_COLOR} />
       </BarChart>
     </ResponsiveContainer>

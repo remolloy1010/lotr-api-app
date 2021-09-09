@@ -79,8 +79,18 @@ export default function App() {
         - {character} ({characterRace})
       </cite>
       <div>
+        <h2>Gender Distribution</h2>
+        <h4>
+          <em>
+            What's the gender distribution among the characters in the books?
+          </em>
+        </h4>
         <GenderChart data={genderArray}></GenderChart>
 
+        <h2>Race</h2>
+        <h4>
+          <em>How many characters in the books are a part of each race?</em>
+        </h4>
         <RacesBarChart data={raceArray}> </RacesBarChart>
       </div>
     </div>
