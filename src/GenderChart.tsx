@@ -22,9 +22,9 @@ export default function GenderChart(props: any) {
         fill="#8884d8"
         nameKey="gender"
       >
-        {props.data.map((entry: any, index: any) => (
+        {/* {props.data.map((entry: any, index: any) => (
           <Cell key={`cell-${index}`} fill={colors[index]} />
-        ))}
+        ))} */}
       </Pie>
 
       <Tooltip />

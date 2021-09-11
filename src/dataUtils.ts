@@ -136,3 +136,11 @@ export const genderAnalytics = (charList: any) => {
 
   return genderCountArray;
 };
+
+export const movieAnalytics = (movieList: any) => {
+  const movieRatingScore: Array<string> = movieList.docs.map(
+    (doc: any) => doc.rottenTomatoesScore
+  );
+  console.log(movieRatingScore);
+  return movieRatingScore;
+};

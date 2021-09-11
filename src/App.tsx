@@ -8,15 +8,16 @@ import {
   MOVIES_ENDPOINT,
   QUOTES_ENDPOINT,
 } from "./apiUtils";
-import { genderAnalytics, getRaceCount } from "./dataUtils";
+import { genderAnalytics, getRaceCount, movieAnalytics } from "./dataUtils";
 import RacesBarChart from "./RacesBarChart";
 import GenderChart from "./GenderChart";
+import ExamplePie from "./charts/MovieRatingPieChart";
 
 export default function App() {
   const [raceArray, setRaceArray] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [characters, setCharacters] = useState();
+  const [movies, setMovies] = useState();
   const [genderArray, setGenderArray] = useState();
 
   const { quote, character, characterRace } = useFetchQuote();
@@ -48,9 +49,11 @@ export default function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const characters = await fetchAPIData(QUOTES_ENDPOINT);
-        setCharacters(characters);
-        console.log(characters);
+        const movies = await fetchAPIData(MOVIES_ENDPOINT);
+        setMovies(movies);
+        console.log("----------");
+        console.log(movies.docs[0]);
+        // console.log(movieAnalytics(movies));
       } catch (error) {
         setError(true);
       } finally {
@@ -86,7 +89,7 @@ export default function App() {
           </em>
         </h4>
         <GenderChart data={genderArray}></GenderChart>
-
+        <ExamplePie data={movies}></ExamplePie>
         <h2>Race</h2>
         <h4>
           <em>How many characters in the books are a part of each race?</em>
